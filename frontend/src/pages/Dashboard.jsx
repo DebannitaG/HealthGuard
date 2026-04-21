@@ -3,7 +3,7 @@ import axios from "axios"
 import { supabase } from "../supabaseClient"
 import ResultCard from "../components/ResultCard"
 
-const API = "http://localhost:5000"
+const API = "https://healthguard-backend-7zgt.onrender.com"
 
 export default function Dashboard() {
   const [input, setInput]     = useState("")
