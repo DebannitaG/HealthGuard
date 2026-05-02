@@ -1,16 +1,9 @@
-import { supabase } from "../supabaseClient"
-
 const links = [
   { icon: "◈", label: "Dashboard" },
   { icon: "☰", label: "History"   },
-  { icon: "⊙", label: "Profile"   },
 ]
 
 export default function Sidebar({ activePage, setPage }) {
-  const signOut = async () => {
-    await supabase.auth.signOut()
-  }
-
   return (
     <aside className="w-60 bg-slate-950 border-r border-slate-800 flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-slate-800 flex items-center gap-3">
@@ -42,15 +35,11 @@ export default function Sidebar({ activePage, setPage }) {
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <div className="bg-slate-800/50 rounded-xl p-3 mb-3">
-          <p className="text-slate-400 text-xs">Logged in</p>
+        <div className="bg-slate-800/50 rounded-xl p-3">
+          <p className="text-slate-400 text-xs text-center">
+            ⚠ Not for medical use
+          </p>
         </div>
-        <button
-          onClick={signOut}
-          className="w-full text-slate-500 text-xs hover:text-red-400 transition py-2"
-        >
-          Sign out
-        </button>
       </div>
     </aside>
   )

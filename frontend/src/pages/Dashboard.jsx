@@ -1,6 +1,5 @@
 import { useState } from "react"
 import axios from "axios"
-import { supabase } from "../supabaseClient"
 import ResultCard from "../components/ResultCard"
 
 const API = "https://healthguard-backend-7zgt.onrender.com"
@@ -33,23 +32,6 @@ export default function Dashboard() {
         age: parseInt(age),
       })
       setResult(data)
-
-      // Save report to Supabase
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (user) {
-          await supabase.from("reports").insert({
-            user_id:  user.id,
-            symptoms: chips,
-            age:      parseInt(age),
-            result:   data,
-          })
-          console.log("[DB] Report saved successfully")
-        }
-      } catch (err) {
-        console.error("[DB] Save failed:", err.message)
-      }
-
     } catch (e) {
       setError(e.response?.data?.error || "Something went wrong. Is the backend running?")
     } finally {
@@ -59,8 +41,6 @@ export default function Dashboard() {
 
   return (
     <main className="flex-1 p-8 overflow-y-auto">
-
-      {/* Header */}
       <div className="mb-8">
         <h2 className="text-white text-2xl font-semibold">Symptom Analysis</h2>
         <p className="text-slate-400 text-sm mt-1">
@@ -68,10 +48,7 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Input Card */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
-
-        {/* Symptom Input */}
         <label className="text-slate-500 text-xs uppercase tracking-wider mb-2 block">
           Add Symptoms
         </label>
@@ -94,12 +71,10 @@ export default function Dashboard() {
           </button>
         </div>
 
-        {/* Chips */}
         {chips.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-5">
             {chips.map(c => (
-              <span
-                key={c}
+              <span key={c}
                 className="bg-slate-800 border border-slate-700 text-white
                   text-xs px-3 py-1.5 rounded-full flex items-center gap-2"
               >
@@ -113,7 +88,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Age Input */}
         <label className="text-slate-500 text-xs uppercase tracking-wider mb-2 block">
           Patient Age
         </label>
@@ -129,14 +103,12 @@ export default function Dashboard() {
             focus:border-teal-500 transition"
         />
 
-        {/* Error */}
         {error && (
           <div className="mt-4 bg-red-500/10 border border-red-500/30 rounded-xl p-3">
             <p className="text-red-400 text-sm">{error}</p>
           </div>
         )}
 
-        {/* Submit */}
         <button
           onClick={analyze}
           disabled={loading}
@@ -153,9 +125,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* Results */}
       {result && <ResultCard result={result} />}
-
     </main>
   )
 }

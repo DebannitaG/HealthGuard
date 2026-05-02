@@ -1,20 +1,23 @@
 import { useEffect, useState } from "react"
-import { supabase } from "../supabaseClient"
+import axios from "axios"
+
+const API = "https://healthguard-backend-7zgt.onrender.com"
 
 export default function History() {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState("")
 
   useEffect(() => {
     const load = async () => {
-      const { data, error } = await supabase
-        .from("reports")
-        .select("*")
-        .order("created_at", { ascending: false })
-
-      if (error) console.error(error.message)
-      else setReports(data || [])
-      setLoading(false)
+      try {
+        const { data } = await axios.get(`${API}/history`)
+        setReports(data || [])
+      } catch (e) {
+        setError("Could not load history.")
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -37,21 +40,29 @@ export default function History() {
       <div className="mb-8">
         <h2 className="text-white text-2xl font-semibold">Report History</h2>
         <p className="text-slate-400 text-sm mt-1">
-          All your past triage analyses.
+          All past triage analyses.
         </p>
       </div>
 
-      {reports.length === 0 ? (
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-4">
+          <p className="text-red-400 text-sm">{error}</p>
+        </div>
+      )}
+
+      {reports.length === 0 && !error ? (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
-          <p className="text-slate-400 text-sm">No reports yet. Run your first analysis!</p>
+          <p className="text-slate-400 text-sm">
+            No reports yet. Run your first analysis!
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {reports.map(r => {
+          {reports.map((r, index) => {
             const sev = r.result?.severity?.toUpperCase() || "UNKNOWN"
             const cls = SEV_COLORS[sev] || SEV_COLORS.UNKNOWN
             return (
-              <div key={r.id}
+              <div key={index}
                 className="bg-slate-900 border border-slate-800 rounded-2xl p-5">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex flex-wrap gap-2">
