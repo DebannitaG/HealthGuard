@@ -1,9 +1,14 @@
+// frontend/src/components/Sidebar.jsx
+import { getUser } from "../utils/auth"
+
 const links = [
   { icon: "◈", label: "Dashboard" },
   { icon: "☰", label: "History"   },
 ]
 
-export default function Sidebar({ activePage, setPage }) {
+export default function Sidebar({ activePage, setPage, onLogout }) {
+  const user = getUser()
+
   return (
     <aside className="w-60 bg-slate-950 border-r border-slate-800 flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-slate-800 flex items-center gap-3">
@@ -15,6 +20,14 @@ export default function Sidebar({ activePage, setPage }) {
           <p className="text-slate-500 text-xs">AI Triage</p>
         </div>
       </div>
+
+      {/* User info */}
+      {user?.full_name && (
+        <div className="px-4 py-3 border-b border-slate-800">
+          <p className="text-white text-sm font-medium">{user.full_name}</p>
+          <p className="text-slate-500 text-xs">{user.email}</p>
+        </div>
+      )}
 
       <nav className="flex-1 p-4 space-y-1">
         {links.map(l => (
@@ -35,11 +48,17 @@ export default function Sidebar({ activePage, setPage }) {
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <div className="bg-slate-800/50 rounded-xl p-3">
+        <div className="bg-slate-800/50 rounded-xl p-3 mb-3">
           <p className="text-slate-400 text-xs text-center">
             ⚠ Not for medical use
           </p>
         </div>
+        <button
+          onClick={onLogout}
+          className="w-full text-slate-500 text-xs hover:text-red-400 transition py-2"
+        >
+          Sign out
+        </button>
       </div>
     </aside>
   )

@@ -1,5 +1,7 @@
+// frontend/src/pages/History.jsx
 import { useEffect, useState } from "react"
 import axios from "axios"
+import { getToken } from "../utils/auth"
 
 const API = "https://healthguard-backend-7zgt.onrender.com"
 
@@ -11,7 +13,9 @@ export default function History() {
   useEffect(() => {
     const load = async () => {
       try {
-        const { data } = await axios.get(`${API}/history`)
+        const { data } = await axios.get(`${API}/history`, {
+          headers: { Authorization: `Bearer ${getToken()}` }
+        })
         setReports(data || [])
       } catch (e) {
         setError("Could not load history.")
@@ -39,9 +43,7 @@ export default function History() {
     <main className="flex-1 p-8 overflow-y-auto">
       <div className="mb-8">
         <h2 className="text-white text-2xl font-semibold">Report History</h2>
-        <p className="text-slate-400 text-sm mt-1">
-          All past triage analyses.
-        </p>
+        <p className="text-slate-400 text-sm mt-1">Your past triage analyses.</p>
       </div>
 
       {error && (
@@ -52,9 +54,7 @@ export default function History() {
 
       {reports.length === 0 && !error ? (
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-10 text-center">
-          <p className="text-slate-400 text-sm">
-            No reports yet. Run your first analysis!
-          </p>
+          <p className="text-slate-400 text-sm">No reports yet. Run your first analysis!</p>
         </div>
       ) : (
         <div className="space-y-4">

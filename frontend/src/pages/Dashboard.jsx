@@ -1,6 +1,8 @@
+// frontend/src/pages/Dashboard.jsx
 import { useState } from "react"
 import axios from "axios"
 import ResultCard from "../components/ResultCard"
+import { getToken } from "../utils/auth"
 
 const API = "https://healthguard-backend-7zgt.onrender.com"
 
@@ -27,13 +29,14 @@ export default function Dashboard() {
     if (!age)          { setError("Please enter your age."); return }
     setLoading(true); setError(""); setResult(null)
     try {
-      const { data } = await axios.post(`${API}/analyze`, {
-        symptoms: chips,
-        age: parseInt(age),
-      })
+      const { data } = await axios.post(
+        `${API}/analyze`,
+        { symptoms: chips, age: parseInt(age) },
+        { headers: { Authorization: `Bearer ${getToken()}` } }
+      )
       setResult(data)
     } catch (e) {
-      setError(e.response?.data?.error || "Something went wrong. Is the backend running?")
+      setError(e.response?.data?.error || "Something went wrong.")
     } finally {
       setLoading(false)
     }
