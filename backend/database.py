@@ -33,12 +33,17 @@ def init_db():
         cur.execute("""
             CREATE TABLE IF NOT EXISTS reports (
                 id         SERIAL PRIMARY KEY,
-                user_id    INTEGER REFERENCES users(id),
                 symptoms   TEXT[],
                 age        INTEGER,
                 result     JSONB,
                 created_at TIMESTAMP DEFAULT NOW()
             )
+        """)
+
+        # Fix: add user_id column if missing
+        cur.execute("""
+            ALTER TABLE reports
+            ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id)
         """)
 
         conn.commit()
